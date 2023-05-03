@@ -1,0 +1,19 @@
+.cell {
+  border:2px solid black;
+  height: 50px;
+  width: 50px;
+}
+
+.moving {
+  background-color: lightBlue;
+  border:2px solid black;
+  height: 50px;
+  width: 50px;
+}
+
+.filled {
+  background-color: yellow;
+  border:2px solid black;
+  height: 50px;
+  width: 50px;
+}
