@@ -124,9 +124,10 @@ function removeFilledRows() {
   for (let i = 0; i < rows.length-1; i++) {
     const cells = rows[i].getElementsByTagName("td");
     let isRowFilled = true;
-
+    
     for (let j = 0; j < cells.length; j++) {
       if (!cells[j].classList.contains("filled")) {
+        console.log(cells[j],cells[j].classList.contains("filled"),)
         isRowFilled = false;
         break;
       }
@@ -140,9 +141,9 @@ function removeFilledRows() {
          clearInterval(processTurn)/************************************** */
       }
     }
-    return hasRemovedRow
+     
   }
-   
+  return hasRemovedRow
 }
 
 function dropFilledSquaresDown() {
@@ -193,7 +194,7 @@ let movedSquare = null;
 let height = 10;
 let width = 10;
 createGrid(height, width);
-let processTurn = setInterval((movedSquare) => processIteration(movedSquare),200);
+let processTurn = setInterval((movedSquare) => processIteration(movedSquare),100);
 
 /* dokoduj funkci na dropování čtverců
 oprav chybu s pomalou odezvou mazání čtverců
