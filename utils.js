@@ -12,4 +12,22 @@ function isOnSameColumn(index1, index2, width) {
   return index1 % width === index2 % width;
 }
 
-export  {removeClassForAll,isOnSameColumn}
+function checkGridCellFree(square){
+  return document.getElementById(square).classList.contains('filled');
+}
+
+function checkForWalls(movedSquare, width) {
+  let areSquaresAtBorder = [];
+  for (let square in movedSquare) {
+    let isSquareAtBorder = {
+      index: square,
+      left: isOnSameColumn(0, movedSquare[square], width),
+      right: isOnSameColumn(width - 1, movedSquare[square], width),
+    };
+    areSquaresAtBorder.push(isSquareAtBorder);
+  }
+  return areSquaresAtBorder;
+  //   console.log(areSquaresAtBorder,"xyz")
+}
+
+export  {removeClassForAll,isOnSameColumn,checkForWalls,checkGridCellFree}
