@@ -17,7 +17,11 @@ function cellCrossesTheEdge(movedSquare) {
 
 function checkForGround(movedSquare) {
   for(let square in movedSquare){
-   if(document.getElementById(movedSquare[square]+width).classList.contains('filled') ){
+    console.log(movedSquare[square]+width > width*height-1,"cc")
+    if(movedSquare[square]+width > width*height-1 ){
+      return true;
+    }
+   if(document.getElementById(movedSquare[square]+width).classList.contains('filled')){
     return true;
    }
   }
@@ -90,8 +94,6 @@ function processIteration() {
     }
     checkForWalls(movedSquare,width);
     const SomeRowRemoved = removeFilledRows();
-    console.log(SomeRowRemoved,"xyz")
-    if(SomeRowRemoved){dropFilledSquaresDown()} ;
     let hitGround = checkForGround(movedSquare);
     if (!hitGround) {
       moveSquare(movedSquare, width);
@@ -107,8 +109,9 @@ function processIteration() {
 }
 
 function transformSquaretoGround(movedSquare) {
+  console.log("firingtransform",movedSquare)
   if(movedSquare === null){return console.log("square doesnt exist")}
-  for (let square in movedSquare) {
+  for (let square in movedSquare) { 
     let cell = document.getElementById(movedSquare[square]);
     cell.classList.remove('moving');
     cell.className = 'filled';
@@ -127,7 +130,7 @@ function removeFilledRows() {
     
     for (let j = 0; j < cells.length; j++) {
       if (!cells[j].classList.contains("filled")) {
-        console.log(cells[j],cells[j].classList.contains("filled"),)
+        // console.log(cells[j],cells[j].classList.contains("filled"))
         isRowFilled = false;
         break;
       }
@@ -137,65 +140,104 @@ function removeFilledRows() {
         cells[j].classList.remove("filled"); 
         cells[j].classList.add("cell");
         hasRemovedRow = true;
-        console.log(hasRemovedRow)
-         clearInterval(processTurn)/************************************** */
+        // console.log(hasRemovedRow)
+        dropFilledSquaresDown(1, width)
       }
+     
+      clearInterval(processTurn)/************************************** */
     }
      
   }
   return hasRemovedRow
 }
 
-function dropFilledSquaresDown() {
-  const table = document.getElementById("table");
-  const rows = table.getElementsByTagName("tr");
+function dropFilledSquaresDown(rowsDown, width) {
   const filledCells = Array.from(document.querySelectorAll('.filled'));
-  //console.log(filledCells) 
-
-  for (let i = filledCells.length-1; i >= 0; i--) {
-    function isCellUnderFilled(cellUnder,cell) {
-      console.log(cellUnder,"X")
-      if (!cellUnder) {  // stop the recursion if the cell underneath is null
-        console.log("cellUnder is null")
-        return;
-      }
-  
-      if (cellUnder.classList.contains('filled')) {
-        
-         if(cell.id == cellUnder.id-width){ return}
-        
-        closestCellUnder = cellUnder ;
-        let closestUnfilledCell = document.getElementById(closestCellUnder.id - width)
-        // console.log(closestUnfilledCell,closestCellUnder.id - width,closestCellUnder.id,cell)
-        closestUnfilledCell.classList.add("filled"); 
-        cell.classList.remove("filled")
-        cell.classList.add("cell")
-        // console.log(closestUnfilledCell)
-        // clearInterval(processTurn)/************************************ */
-      } else {
-        isCellUnderFilled(table.rows[cellUnder.parentNode.rowIndex + 1].cells[cellUnder.cellIndex],cell);
-      }
-       
-    }
+  console.log(filledCells);
+  for (let i = filledCells.length-1; i >= 0; i--){
     const cellId = filledCells[i].id;
-    let closestCellUnder = null;
-    const rowIndex = filledCells[i].parentNode.rowIndex + 1;
-    const cellIndex = filledCells[i].cellIndex;
-    console.log(cellId,"y")
-    if (table.rows[rowIndex]) { // Check if the row exists
-      isCellUnderFilled(table.rows[rowIndex].cells[cellIndex],filledCells[i]);
+    const htmlCell = document.getElementById(cellId);
+    const newId = parseInt(cellId) + width * rowsDown;
+    const newCell = document.getElementById(newId)
+    console.log(   newId,cellId,newCell)
+    if (newCell !== null ) {
+      if(!document.getElementById(newId).classList.contains('filled')){
+        newId.toString();
+        htmlCell.classList.remove('filled'); // Remove 'filled' class from the cell
+        console.log(newId)
+        htmlCell.classList.add('cell');
+        const newPosition = document.getElementById(newId);
+        newPosition.classList.add('filled'); // Add 'filled' class to the new cell
+        newPosition.classList.add('cell');
+        console.log(htmlCell, newId, cellId, newPosition);
+      }
+      
     }
-  }
-  
-}
- 
 
+  }
+  // for (let cell of filledCells) {
+  //   console.log(cell)
+  //   const htmlCell = document.getElementById(cell.id);
+  //   const cellId = cell.id;
+  //   const newId = parseInt(cellId) + width * rowsDown;
+  //   const newPosition = document.getElementById(newId);
+  //   htmlCell.classList.remove('filled'); // Remove 'filled' class from the cell
+  //   console.log(htmlCell.classList);
+  //   htmlCell.classList.add('cell');
+  //   if (newId >= 0) {
+  //     cell.id = newId.toString();
+  //     newPosition.classList.add('filled'); // Add 'filled' class to the new cell
+  //     newPosition.classList.add('cell');
+  //   }
+  // }
+}
+   // const table = document.getElementById("table");
+  // const rows = table.getElementsByTagName("tr");
+  // for (let i = filledCells.length-1; i >= 0; i--) {
+    // const cellId = filledCells[i].id;
+    // const newId = cellId - width*rowsDown;
+    // // filledCells[i].id = newId;
+    // console.log(filledCells[i].id,"z")
+    // // const rowIndex = filledCells[i].parentNode.rowIndex + 1;
+    // // const cellIndex = filledCells[i].cellIndex;
+    // console.log(cellId,"y")
+    // // if (table.rows[rowIndex]) { // Check if the row exists
+    //   filledCells[i].id = newId;
+    // }
+
+  // }
+  
 let movedSquare = null;
 let height = 10;
 let width = 10;
 createGrid(height, width);
-let processTurn = setInterval((movedSquare) => processIteration(movedSquare),100);
+let processTurn = setInterval((movedSquare) => processIteration(movedSquare),1000);
 
+
+   // function isCellUnderFilled(cellUnder,cell) {
+    //   console.log(cellUnder,"X")
+    //   if (!cellUnder) {  // stop the recursion if the cell underneath is null
+    //     console.log("cellUnder is null")
+    //     return;
+    //   }
+  
+    //   if (cellUnder.classList.contains('filled')) {
+        
+    //      if(cell.id == cellUnder.id-width){ return}
+        
+    //     closestCellUnder = cellUnder ;
+    //     let closestUnfilledCell = document.getElementById(closestCellUnder.id - width)
+    //     // console.log(closestUnfilledCell,closestCellUnder.id - width,closestCellUnder.id,cell)
+    //     closestUnfilledCell.classList.add("filled"); 
+    //     cell.classList.remove("filled")
+    //     cell.classList.add("cell")
+    //     // console.log(closestUnfilledCell)
+    //     // clearInterval(processTurn)/************************************ */
+    //   } else {
+    //     isCellUnderFilled(table.rows[cellUnder.parentNode.rowIndex + 1].cells[cellUnder.cellIndex],cell);
+    //   }
+       
+    // }
 /* dokoduj funkci na dropování čtverců
 oprav chybu s pomalou odezvou mazání čtverců
 přidej nové tvary do hry

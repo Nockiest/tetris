@@ -1,7 +1,7 @@
 export default function createGrid(height, width) {
   let table = document.getElementById("table");
 
-  for (let i = 0; i <= height; i++) {
+  for (let i = 0; i <= height-1; i++) {
     let row = table.insertRow();
     for (let y = 0; y < width; y++) {
       var cell = row.insertCell();
