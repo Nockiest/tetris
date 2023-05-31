@@ -1,4 +1,4 @@
-  function removeClassForAll(className) {
+function removeClassForAll(className) {
   let cellsWithClass = document.querySelectorAll('.' + className);
   if (cellsWithClass.length > 0) {
     for (let i = 0; i < cellsWithClass.length; i++) {
@@ -30,4 +30,23 @@ function checkForWalls(movedSquare, width) {
   //   console.log(areSquaresAtBorder,"xyz")
 }
 
-export  {removeClassForAll,isOnSameColumn,checkForWalls,checkGridCellFree}
+ 
+function cellCrossesTheEdge(movedSquare,width) {
+  for (let i = 0; i < movedSquare.length; i++) {
+    const squareIndex = movedSquare[i];
+    const crossesLeftEdge = isOnSameColumn(0, squareIndex, width);
+    const crossesRightEdge = isOnSameColumn(width - 1, squareIndex, width);
+    if (crossesLeftEdge || crossesRightEdge) {
+      return crossesLeftEdge ? "left" : "right";
+    }
+  }
+  return false;
+}
+
+// function indexToCoordinates(index, width) {
+//   const x = index % width;
+//   const y = Math.floor(index / width);
+//   return [x, y];
+// }
+
+export  {removeClassForAll,isOnSameColumn,checkForWalls,checkGridCellFree,cellCrossesTheEdge, }

@@ -1,31 +1,6 @@
 
-import createGrid from './grid.js';
-import {removeClassForAll,isOnSameColumn,checkForWalls/*checkGridCellFree*/} from './utils.js';
-
- 
-function cellCrossesTheEdge(movedSquare) {
-  for (let i = 0; i < movedSquare.length; i++) {
-    const squareIndex = movedSquare[i];
-    const crossesLeftEdge = isOnSameColumn(0, squareIndex, width);
-    const crossesRightEdge = isOnSameColumn(width - 1, squareIndex, width);
-    if (crossesLeftEdge || crossesRightEdge) {
-      return crossesLeftEdge ? "left" : "right";
-    }
-  }
-  return false;
-}
-
-function checkForGround(movedSquare) {
-  for(let square in movedSquare){
-    console.log(movedSquare[square]+width > width*height-1,"cc")
-    if(movedSquare[square]+width > width*height-1 ){
-      return true;
-    }
-   if(document.getElementById(movedSquare[square]+width).classList.contains('filled')){
-    return true;
-   }
-  }
-}
+import createGrid, {createCodeGameRepresentation} from './grid.js';
+import {removeClassForAll,isOnSameColumn,checkForWalls,cellCrossesTheEdge,/*indexToCoordinates checkGridCellFree*/} from './utils.js';
 
 window.addEventListener(
   'keydown',
@@ -36,8 +11,8 @@ window.addEventListener(
  let cellsIsOnTheLeft = false;
  let cellsIsOnTheRight = false;
     for(let square in movedSquare){        
-      cellsIsOnTheLeft= cellCrossesTheEdge(movedSquare ) === "left";
-      cellsIsOnTheRight= cellCrossesTheEdge(movedSquare ) === "right";       
+      cellsIsOnTheLeft= cellCrossesTheEdge(movedSquare,width ) === "left";
+      cellsIsOnTheRight= cellCrossesTheEdge(movedSquare,width ) === "right";       
     }
    // console.log(movedSquare,cellsIsOnTheLeft,cellsIsOnTheRight,"edges")
 
@@ -66,12 +41,26 @@ window.addEventListener(
   true
 );
 
+function checkForGround(movedSquare) {
+  for(let square in movedSquare){
+    console.log(movedSquare[square]+width > width*height-1,"cc")
+    if(movedSquare[square]+width > width*height-1 ){
+      return true;
+    }
+   if(document.getElementById(movedSquare[square]+width).classList.contains('filled')){
+    return true;
+   }
+  }
+}
+
 function generateSquare(topLeftSquare) {
   console.log(topLeftSquare)
   let position1 = topLeftSquare;
   let positions = [position1, position1 + 1, position1 + 10, position1 + 11];
 
   for (let position in positions) {
+    changeValueInArray( gameRepresentation, position, 1)
+    console.log(gameRepresentation)
     let cell = document.getElementById(positions[position]);
     cell.classList.add('moving');
   }
@@ -93,7 +82,7 @@ function processIteration() {
       return movedSquare = generateSquare(Math.abs(Math.floor(Math.random() * (width-1))));
     }
     checkForWalls(movedSquare,width);
-    const SomeRowRemoved = removeFilledRows();
+    removeFilledRows();
     let hitGround = checkForGround(movedSquare);
     if (!hitGround) {
       moveSquare(movedSquare, width);
@@ -115,6 +104,7 @@ function transformSquaretoGround(movedSquare) {
     let cell = document.getElementById(movedSquare[square]);
     cell.classList.remove('moving');
     cell.className = 'filled';
+    changeValueInArray( gameRepresentation, cell, 2)
   }
   movedSquare = null
   removeClassForAll('moving');
@@ -129,6 +119,9 @@ function removeFilledRows() {
     let isRowFilled = true;
     
     for (let j = 0; j < cells.length; j++) {
+      if (gameRepresentation.some(row => row.includes(0))) {
+        console.log("unfilled");
+      }
       if (!cells[j].classList.contains("filled")) {
         // console.log(cells[j],cells[j].classList.contains("filled"))
         isRowFilled = false;
@@ -171,9 +164,7 @@ function dropFilledSquaresDown(rowsDown, width) {
         newPosition.classList.add('cell');
         console.log(htmlCell, newId, cellId, newPosition);
       }
-      
     }
-
   }
   // for (let cell of filledCells) {
   //   console.log(cell)
@@ -191,29 +182,27 @@ function dropFilledSquaresDown(rowsDown, width) {
   //   }
   // }
 }
-   // const table = document.getElementById("table");
-  // const rows = table.getElementsByTagName("tr");
-  // for (let i = filledCells.length-1; i >= 0; i--) {
-    // const cellId = filledCells[i].id;
-    // const newId = cellId - width*rowsDown;
-    // // filledCells[i].id = newId;
-    // console.log(filledCells[i].id,"z")
-    // // const rowIndex = filledCells[i].parentNode.rowIndex + 1;
-    // // const cellIndex = filledCells[i].cellIndex;
-    // console.log(cellId,"y")
-    // // if (table.rows[rowIndex]) { // Check if the row exists
-    //   filledCells[i].id = newId;
-    // }
-
-  // }
+function changeValueInArray(gameRepresentation,arrays, targetValue, newValue) {
+  for (let i = 0; i < arrays.length; i++) {
+    for (let j = 0; j < arrays[i].length; j++) {
+      // console.log((i*width) +j)
+      if ((i*width) +j === targetValue) {
+        console.log((i*width) +j === targetValue , (i*width) +j )
+        arrays[i][j] = newValue;
+      }
+    }
+  }
   
+  return arrays;
+}
 let movedSquare = null;
 let height = 10;
 let width = 10;
 createGrid(height, width);
 let processTurn = setInterval((movedSquare) => processIteration(movedSquare),1000);
-
-
+let gameRepresentation = createCodeGameRepresentation(height,width) 
+const index = 10;
+console.log(changeValueInArray(gameRepresentation, 24, 1))
    // function isCellUnderFilled(cellUnder,cell) {
     //   console.log(cellUnder,"X")
     //   if (!cellUnder) {  // stop the recursion if the cell underneath is null
